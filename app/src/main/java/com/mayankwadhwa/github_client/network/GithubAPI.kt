@@ -1,7 +1,7 @@
 package com.mayankwadhwa.github_client.network
 
 import com.google.gson.GsonBuilder
-import com.google.gson.annotations.SerializedName
+import com.mayankwadhwa.github_client.model.RepoModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -9,33 +9,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
-
-data class BuiltBy(
-    @SerializedName("avatar") val avatar: String,
-    @SerializedName("href") val href: String,
-    @SerializedName("username") val username: String
-)
-
-data class RepoModel(
-    @SerializedName("author")
-    val author: String,
-    @SerializedName("avatar")
-    val avatar: String,
-    @SerializedName("builtBy")
-    val builtBy: List<BuiltBy>,
-    @SerializedName("currentPeriodStars")
-    val currentPeriodStars: Int,
-    @SerializedName("description")
-    val description: String,
-    @SerializedName("forks")
-    val forks: Int,
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("stars")
-    val stars: Int,
-    @SerializedName("url")
-    val url: String
-)
 
 interface GithubAPI {
     @GET("repositories")
