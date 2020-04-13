@@ -44,7 +44,7 @@ class GithubAPITestUsingMockServer {
      * @param path : Path of JSON file
      * @return json : JSON from file at given path
      */
-    fun getJson(path: String): String {
+    private fun getJson(path: String): String {
         // Load the JSON response
         val uri = this.javaClass.classLoader?.getResource(path)
         val file = File(uri?.path)
