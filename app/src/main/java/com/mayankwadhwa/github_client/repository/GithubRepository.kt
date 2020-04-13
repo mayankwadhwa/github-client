@@ -2,9 +2,8 @@ package com.mayankwadhwa.github_client.repository
 
 import com.mayankwadhwa.github_client.model.RepoModel
 
-
 interface GithubRepository {
-    fun getTrendingRepositories(callback: RepositoryCallback<List<RepoModel>, String>)
+    suspend fun getTrendingRepositories(): List<RepoModel>
 }
 
 interface RepositoryCallback<T, E> {

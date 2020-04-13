@@ -12,7 +12,7 @@ import retrofit2.http.GET
 
 interface GithubAPI {
     @GET("repositories")
-    suspend fun getTrendingRepositories(): Call<RepoModel>
+    suspend fun getTrendingRepositories(): List<RepoModel>
 
     companion object Factory {
         fun create(): GithubAPI {
