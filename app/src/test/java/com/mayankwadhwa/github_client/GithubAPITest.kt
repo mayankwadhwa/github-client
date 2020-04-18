@@ -6,7 +6,8 @@ import com.google.gson.reflect.TypeToken
 import com.mayankwadhwa.github_client.model.BuiltBy
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.network.GithubAPI
-import com.mayankwadhwa.github_client.repository.RepositoryImpl
+import com.mayankwadhwa.github_client.repository.GithubRepositoryImpl
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
@@ -74,22 +75,24 @@ class GithubAPITestUsingMockServer {
 class GithubAPITestMockingService {
     private val faker = Faker()
     private val githubAPI: GithubAPI = mock()
-    private val repository = RepositoryImpl(githubAPI)
+    private val repository = GithubRepositoryImpl(githubAPI, any())
 
     @Test
     fun getTrendingList_returnsList() = runBlockingTest {
         val repoModel = RepoModel(
             faker.name().firstName(),
             faker.avatar().image(),
-            listOf(
-                BuiltBy(faker.avatar().image(), faker.avatar().image(), faker.name().username())
-            ),
             faker.number().randomDigit(),
             faker.leagueOfLegends().champion(),
             faker.number().randomDigit(),
             faker.name().fullName(),
             faker.number().randomDigit(),
-            faker.avatar().image()
+            faker.avatar().image(),
+            listOf(
+                BuiltBy(
+                    faker.avatar().image(), faker.avatar().image(), faker.name().username()
+                )
+            )
         )
         val listOfRepoModel = listOf(repoModel)
         whenever(githubAPI.getTrendingRepositories()).thenReturn(listOfRepoModel)

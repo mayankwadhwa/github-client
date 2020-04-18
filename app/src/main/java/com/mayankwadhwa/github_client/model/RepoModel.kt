@@ -1,24 +1,41 @@
 package com.mayankwadhwa.github_client.model
 
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "TrendingRepo")
 data class RepoModel(
+
     @SerializedName("author")
-    val author: String,
+    var author: String,
+
     @SerializedName("avatar")
-    val avatar: String,
-    @SerializedName("builtBy")
-    val builtBy: List<BuiltBy>,
+    var avatar: String,
+
     @SerializedName("currentPeriodStars")
-    val currentPeriodStars: Int,
+    var currentPeriodStars: Int,
+
     @SerializedName("description")
-    val description: String,
+    var description: String,
+
     @SerializedName("forks")
-    val forks: Int,
+    var forks: Int,
+
     @SerializedName("name")
-    val name: String,
+    var name: String,
+
     @SerializedName("stars")
-    val stars: Int,
+    var stars: Int,
+
+    @PrimaryKey
     @SerializedName("url")
-    val url: String
-)
+    var url: String,
+
+    @Ignore
+    @SerializedName("builtBy")
+    val builtBy: List<BuiltBy>
+){
+    constructor(): this("","",0,"",0,"",0,"", emptyList())
+}

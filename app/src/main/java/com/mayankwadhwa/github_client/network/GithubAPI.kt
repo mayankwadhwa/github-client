@@ -1,6 +1,5 @@
 package com.mayankwadhwa.github_client.network
 
-import com.google.gson.GsonBuilder
 import com.mayankwadhwa.github_client.model.RepoModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,12 +10,10 @@ import retrofit2.http.GET
 
 interface GithubAPI {
     @GET("repositories")
-    suspend fun getTrendingRepositories(): List<RepoModel>
+    suspend fun getTrendingRepositories(): List<RepoModel>?
 
     companion object Factory {
         fun create(): GithubAPI {
-            val gson = GsonBuilder().create()
-
             val client = OkHttpClient.Builder().apply {
                 val interceptor = HttpLoggingInterceptor()
                 interceptor.level = HttpLoggingInterceptor.Level.BASIC
