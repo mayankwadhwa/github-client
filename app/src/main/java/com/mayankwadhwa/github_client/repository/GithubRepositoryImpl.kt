@@ -8,11 +8,14 @@ import com.mayankwadhwa.github_client.persistence.GithubDao
 class GithubRepositoryImpl(private val githubAPI: GithubAPI, private val githubDao: GithubDao) :
     GithubRepository {
 
-    override suspend fun getTrendingRepositories(): List<RepoModel>? {
+    override suspend fun getTrendingRepositoriesFromNetwork(): List<RepoModel>? {
         return githubAPI.getTrendingRepositories()
     }
 
-    override fun getTrendingRepositoriesFromDatabase(): LiveData<List<RepoModel>> {
+    override suspend fun getTrendingRepositories(): LiveData<List<RepoModel>> {
+        val trendingList = githubDao.getTrendingList().value
+        if (trendingList.isNullOrEmpty())
+            saveTrendingRepositories(getTrendingRepositoriesFromNetwork())
         return githubDao.getTrendingList()
     }
 

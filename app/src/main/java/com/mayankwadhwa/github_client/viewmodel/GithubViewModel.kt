@@ -18,7 +18,7 @@ class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
         errorLiveData.value = throwable
     }
 
-    val coroutineContext = viewModelScope.coroutineContext + coroutineExceptionHandler
+    private val coroutineContext = viewModelScope.coroutineContext + coroutineExceptionHandler
 
     fun getLoading(): LiveData<Boolean> = loadingLiveData
     fun getError(): LiveData<Throwable?> = errorLiveData
@@ -27,7 +27,7 @@ class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
     fun init() {
         loadingLiveData.value = true
         viewModelScope.launch(coroutineContext) {
-            val trendingRepositories = repository.getTrendingRepositories()
+            val trendingRepositories = repository.getTrendingRepositoriesFromNetwork()
             if (trendingRepositories != null)
                 trendingListLiveData.value = trendingRepositories
         }.invokeOnCompletion {

@@ -68,7 +68,7 @@ class GithubDaoTest {
     }
 
     @Test
-    fun saveTrendingList_savesData() {
+    fun saveTrendingList_savesData(){
         githubDao.saveTrendingList(listOfRepoModel)
         val testObserver: Observer<List<RepoModel>> = mock()
 

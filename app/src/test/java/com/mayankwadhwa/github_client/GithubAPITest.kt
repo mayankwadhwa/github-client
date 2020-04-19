@@ -96,7 +96,7 @@ class GithubAPITestMockingService {
         )
         val listOfRepoModel = listOf(repoModel)
         whenever(githubAPI.getTrendingRepositories()).thenReturn(listOfRepoModel)
-        Assert.assertEquals(repository.getTrendingRepositories(), listOfRepoModel)
+        Assert.assertEquals(repository.getTrendingRepositoriesFromNetwork(), listOfRepoModel)
 
     }
 }

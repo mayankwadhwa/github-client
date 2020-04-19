@@ -83,7 +83,7 @@ class GithubViewModelUnitTests {
     @Test
     fun init_shouldReturnTrendingList() = runBlockingTest {
 
-        whenever(repository.getTrendingRepositories()).thenReturn(listOfRepoModel)
+        whenever(repository.getTrendingRepositoriesFromNetwork()).thenReturn(listOfRepoModel)
 
         viewModel.init()
         verify(trendingRepoObserver).onChanged(eq(listOfRepoModel))
@@ -99,7 +99,7 @@ class GithubViewModelUnitTests {
 
     @Test
     fun init_shouldHideLoading_whenInitReturnsList() = runBlockingTest {
-        whenever(repository.getTrendingRepositories()).thenReturn(listOfRepoModel)
+        whenever(repository.getTrendingRepositoriesFromNetwork()).thenReturn(listOfRepoModel)
         viewModel.init()
 
         verify(loadingObserver).onChanged(eq(false))
@@ -107,7 +107,7 @@ class GithubViewModelUnitTests {
 
     @Test
     fun init_shouldShowError_whenErrorOccurs() = runBlockingTest {
-        whenever(repository.getTrendingRepositories()).then { throw Exception() }
+        whenever(repository.getTrendingRepositoriesFromNetwork()).then { throw Exception() }
         viewModel.init()
         verify(errorObserver).onChanged(eq(Exception()))
     }

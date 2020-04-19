@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.mayankwadhwa.github_client.adapter.TrendingListAdapter
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.network.GithubAPI
+import com.mayankwadhwa.github_client.persistence.GithubDatabase
 import com.mayankwadhwa.github_client.repository.GithubRepositoryImpl
 import com.mayankwadhwa.github_client.viewmodel.GithubViewModel
 import com.mayankwadhwa.github_client.viewmodel.GithubViewModelFactory
@@ -24,7 +25,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val repository = GithubRepositoryImpl(GithubAPI.create())
+        val dao = GithubDatabase.getDatabase(this).githubDao()
+        val repository = GithubRepositoryImpl(GithubAPI.create(), dao)
         val viewModel = ViewModelProvider(
             this,
             GithubViewModelFactory(repository)
@@ -56,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun showError(error: Throwable?) {
         if (error != null) {
             layout_error.visibility = View.VISIBLE
-            Snackbar.make(layout_parent,"${error.message}",Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(layout_parent, "${error.message}", Snackbar.LENGTH_SHORT).show()
         } else
             layout_error.visibility = View.GONE
     }
