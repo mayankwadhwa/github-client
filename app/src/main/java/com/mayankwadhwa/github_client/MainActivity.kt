@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.mayankwadhwa.github_client.adapter.TrendingListAdapter
 import com.mayankwadhwa.github_client.model.RepoModel
@@ -26,11 +27,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val dao = GithubDatabase.getDatabase(this).githubDao()
-        val repository = GithubRepositoryImpl(GithubAPI.create(), dao)
+        val repository = GithubRepositoryImpl(GithubAPI.create(), dao, lifecycleScope)
         val viewModel = ViewModelProvider(
             this,
             GithubViewModelFactory(repository)
         ).get(GithubViewModel::class.java)
+
 
         viewModel.getLoading().observe(this, Observer {
             it?.let { loading ->
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.getTrendingList().observe(this, Observer {
+        viewModel.getTrendingList()?.observe(this, Observer {
             it?.let { trendingList ->
                 showTrendingList(trendingList)
             }
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.init()
+
     }
 
     private fun showError(error: Throwable?) {

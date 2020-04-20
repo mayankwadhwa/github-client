@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 @Entity(tableName = "TrendingRepo")
 data class RepoModel(
@@ -33,9 +34,11 @@ data class RepoModel(
     @SerializedName("url")
     var url: String,
 
+    var lastUpdated: Long,
+
     @Ignore
     @SerializedName("builtBy")
     val builtBy: List<BuiltBy>
-){
-    constructor(): this("","",0,"",0,"",0,"", emptyList())
+) {
+    constructor() : this("", "", 0, "", 0, "", 0, "", Date().time, emptyList())
 }

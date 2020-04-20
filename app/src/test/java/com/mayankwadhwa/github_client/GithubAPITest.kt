@@ -20,6 +20,7 @@ import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.util.*
 
 
 class GithubAPITestUsingMockServer {
@@ -75,7 +76,7 @@ class GithubAPITestUsingMockServer {
 class GithubAPITestMockingService {
     private val faker = Faker()
     private val githubAPI: GithubAPI = mock()
-    private val repository = GithubRepositoryImpl(githubAPI, any())
+    private val repository = GithubRepositoryImpl(githubAPI, any(), any())
 
     @Test
     fun getTrendingList_returnsList() = runBlockingTest {
@@ -88,6 +89,7 @@ class GithubAPITestMockingService {
             faker.name().fullName(),
             faker.number().randomDigit(),
             faker.avatar().image(),
+            Date().time,
             listOf(
                 BuiltBy(
                     faker.avatar().image(), faker.avatar().image(), faker.name().username()
@@ -96,7 +98,7 @@ class GithubAPITestMockingService {
         )
         val listOfRepoModel = listOf(repoModel)
         whenever(githubAPI.getTrendingRepositories()).thenReturn(listOfRepoModel)
-        Assert.assertEquals(repository.getTrendingRepositoriesFromNetwork(), listOfRepoModel)
+        Assert.assertEquals(repository.getTrendingRepositoriesFromNetworkAsync(), listOfRepoModel)
 
     }
 }

@@ -6,12 +6,12 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.javafaker.Faker
-import com.mayankwadhwa.github_client.model.BuiltBy
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.persistence.GithubDao
 import com.mayankwadhwa.github_client.persistence.GithubDatabase
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -19,6 +19,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @RunWith(AndroidJUnit4::class)
@@ -26,8 +28,10 @@ class GithubDaoTest {
     @get: Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var githubDatabase: GithubDatabase
-    private lateinit var githubDao: GithubDao
+    private lateinit var tempDatabase: GithubDatabase
+    private lateinit var realDatabase: GithubDatabase
+    private lateinit var tempDao: GithubDao
+    private lateinit var realDao: GithubDao
 
     private val faker = Faker()
     private val repoModel = RepoModel(
@@ -39,6 +43,7 @@ class GithubDaoTest {
         faker.name().fullName(),
         faker.number().randomDigit(),
         faker.avatar().image(),
+        Date().time,
         emptyList()
     )
     val listOfRepoModel = listOf(repoModel)
@@ -46,33 +51,38 @@ class GithubDaoTest {
 
     @Before
     fun initDb() {
-        githubDatabase = Room.inMemoryDatabaseBuilder(
+        tempDatabase = Room.inMemoryDatabaseBuilder(
             InstrumentationRegistry.getInstrumentation().context,
             GithubDatabase::class.java
         ).build()
 
-        githubDao = githubDatabase.githubDao()
+        tempDao = tempDatabase.githubDao()
+
+        realDatabase = GithubDatabase.getDatabase(
+            InstrumentationRegistry.getInstrumentation().targetContext)
+
+        realDao = realDatabase.githubDao()
     }
 
     @After
     fun closeDb() {
-        githubDatabase.close()
+        tempDatabase.close()
     }
 
 
     @Test
     fun getTrendingList_returnsEmptyList() {
         val testObserver: Observer<List<RepoModel>> = mock()
-        githubDao.getTrendingList().observeForever(testObserver)
+        tempDao.getTrendingList().observeForever(testObserver)
         verify(testObserver).onChanged(emptyList())
     }
 
     @Test
-    fun saveTrendingList_savesData(){
-        githubDao.saveTrendingList(listOfRepoModel)
+    fun saveTrendingList_savesData() = runBlockingTest{
+        tempDao.saveTrendingList(listOfRepoModel)
         val testObserver: Observer<List<RepoModel>> = mock()
 
-        githubDao.getTrendingList().observeForever(testObserver)
+        tempDao.getTrendingList().observeForever(testObserver)
 
         val listClass = ArrayList::class.java as Class<ArrayList<RepoModel>>
 
@@ -84,10 +94,10 @@ class GithubDaoTest {
     }
 
     @Test
-    fun getAllRetrievesData() {
-        githubDao.saveTrendingList(listOfRepoModel)
+    fun getAllRetrievesData() = runBlockingTest{
+        tempDao.saveTrendingList(listOfRepoModel)
         val testObserver: Observer<List<RepoModel>> = mock()
-        githubDao.getTrendingList().observeForever(testObserver)
+        tempDao.getTrendingList().observeForever(testObserver)
 
         val listClass = ArrayList::class.java as Class<ArrayList<RepoModel>>
 
@@ -99,5 +109,21 @@ class GithubDaoTest {
         assertTrue(capturedArgument.contains(repoModel))
     }
 
+
+    @Test
+    fun checkDatabaseContent(){
+        val testObserver: Observer<List<RepoModel>> = mock()
+        realDao.getTrendingList().observeForever(testObserver)
+
+        val listClass = ArrayList::class.java as Class<ArrayList<RepoModel>>
+
+        val argumentCaptor = ArgumentCaptor.forClass(listClass)
+
+        verify(testObserver).onChanged(argumentCaptor.capture())
+
+        val capturedArgument = argumentCaptor.value
+
+
+    }
 
 }

@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
@@ -56,6 +57,7 @@ class GithubViewModelUnitTests {
         faker.name().fullName(),
         faker.number().randomDigit(),
         faker.avatar().image(),
+        Date().time,
         listOf(
             BuiltBy(
                 faker.avatar().image(), faker.avatar().image(), faker.name().username()
@@ -83,7 +85,7 @@ class GithubViewModelUnitTests {
     @Test
     fun init_shouldReturnTrendingList() = runBlockingTest {
 
-        whenever(repository.getTrendingRepositoriesFromNetwork()).thenReturn(listOfRepoModel)
+//        whenever(repository.getTrendingRepositoriesFromNetworkAsync()).thenReturn(listOfRepoModel)
 
         viewModel.init()
         verify(trendingRepoObserver).onChanged(eq(listOfRepoModel))
@@ -99,7 +101,7 @@ class GithubViewModelUnitTests {
 
     @Test
     fun init_shouldHideLoading_whenInitReturnsList() = runBlockingTest {
-        whenever(repository.getTrendingRepositoriesFromNetwork()).thenReturn(listOfRepoModel)
+//        whenever(repository.getTrendingRepositoriesFromNetwork()).thenReturn(listOfRepoModel)
         viewModel.init()
 
         verify(loadingObserver).onChanged(eq(false))
@@ -107,7 +109,7 @@ class GithubViewModelUnitTests {
 
     @Test
     fun init_shouldShowError_whenErrorOccurs() = runBlockingTest {
-        whenever(repository.getTrendingRepositoriesFromNetwork()).then { throw Exception() }
+//        whenever(repository.getTrendingRepositoriesFromNetwork()).then { throw Exception() }
         viewModel.init()
         verify(errorObserver).onChanged(eq(Exception()))
     }

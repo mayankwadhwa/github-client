@@ -2,10 +2,11 @@ package com.mayankwadhwa.github_client.repository
 
 import androidx.lifecycle.LiveData
 import com.mayankwadhwa.github_client.model.RepoModel
+import kotlinx.coroutines.Deferred
 
 interface GithubRepository {
-    suspend fun getTrendingRepositoriesFromNetwork(): List<RepoModel>?
-    suspend fun getTrendingRepositories(): LiveData<List<RepoModel>>
-    fun saveTrendingRepositories(trendingRepoModel: List<RepoModel>?)
+    fun refreshTrendingList()
+    fun getTrendingRepositories(): LiveData<List<RepoModel>>
+    suspend fun saveTrendingRepositories(trendingRepoModel: List<RepoModel>?)
 }
 

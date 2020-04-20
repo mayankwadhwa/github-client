@@ -10,7 +10,10 @@ interface GithubDao {
     @Query("SELECT * FROM TrendingRepo")
     fun getTrendingList(): LiveData<List<RepoModel>>
 
+    @Query("SELECT COUNT(*) FROM TrendingRepo WHERE lastUpdated >= :timeout")
+    suspend fun hasRecentlyFetched(timeout: Long): Int?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveTrendingList(listOfRepoModel: List<RepoModel>)
+    suspend fun saveTrendingList(listOfRepoModel: List<RepoModel>)
 
 }
