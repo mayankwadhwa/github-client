@@ -3,35 +3,25 @@ package com.mayankwadhwa.github_client.viewmodel
 import androidx.lifecycle.*
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.repository.GithubRepository
+import com.mayankwadhwa.github_client.repository.Resource
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
-    private val loadingLiveData = MutableLiveData<Boolean>()
-    private var trendingListLiveData = repository.getTrendingRepositories()
-    private val errorLiveData = MutableLiveData<Throwable?>()
 
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
-        errorLiveData.value = throwable
+    private var _init: MutableLiveData<String?> = MutableLiveData("")
+    private var trendingListLiveData = Transformations.switchMap(_init){
+        repository.getTrendingRepositories()
     }
 
-    fun getLoading(): LiveData<Boolean> = loadingLiveData
-    fun getError(): LiveData<Throwable?> = errorLiveData
-    fun getTrendingList(): LiveData<List<RepoModel>> = trendingListLiveData
-    fun init() {
+    fun getTrendingList(): LiveData<Resource<List<RepoModel>>> = trendingListLiveData
 
-    }
 
-    fun retry() {
-        loadingLiveData.value = true
-        viewModelScope.launch {
-            repository.getTrendingRepositories()
-        }.invokeOnCompletion {
-            loadingLiveData.value = false
+    fun retry(){
+        _init.value?.let {
+            _init.value = it
         }
     }
 }

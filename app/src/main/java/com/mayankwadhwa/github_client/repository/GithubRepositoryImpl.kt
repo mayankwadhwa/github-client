@@ -1,14 +1,11 @@
 package com.mayankwadhwa.github_client.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.mayankwadhwa.github_client.model.RepoModel
+import com.mayankwadhwa.github_client.network.ApiResponse
 import com.mayankwadhwa.github_client.network.GithubAPI
 import com.mayankwadhwa.github_client.persistence.GithubDao
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -19,44 +16,32 @@ class GithubRepositoryImpl(
 ) :
     GithubRepository {
 
-    private val errorLiveData = MutableLiveData<Throwable?>()
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
-        errorLiveData.value = throwable
-    }
-
-
-    private suspend fun getTrendingRepositoriesFromNetwork() =
-        withContext(coroutineScope.coroutineContext + coroutineExceptionHandler) {
-            githubAPI.getTrendingRepositories()
-        }
-
-    override fun getTrendingRepositories(): LiveData<List<RepoModel>> {
-        refreshTrendingList()
-        return githubDao.getTrendingList()
-    }
-
-
-    override fun refreshTrendingList() {
-        coroutineScope.launch(coroutineExceptionHandler) {
-            val hasRecentlyFetched = githubDao.hasRecentlyFetched(Date().time)
-            if (hasRecentlyFetched == null || hasRecentlyFetched == 0) {
-                val trendingList = getTrendingRepositoriesFromNetwork()
-                trendingList?.forEach { it.lastUpdated = Date().time + FRESH_TIMEOUT }
-                saveTrendingRepositories(trendingList)
+    override fun getTrendingRepositories(): LiveData<Resource<List<RepoModel>>> {
+        return object : NetworkBoundResource<List<RepoModel>, List<RepoModel>>(coroutineScope) {
+            override fun saveCallResult(item: List<RepoModel>) {
+                githubDao.saveTrendingList(item)
             }
-        }
+
+            override fun shouldFetch(data: List<RepoModel>?): Boolean {
+                if (!data.isNullOrEmpty() && data.first().lastUpdated + FRESH_TIMEOUT > Date().time)
+                    return false
+                return true
+            }
+
+            override fun loadFromDb(): LiveData<List<RepoModel>> {
+                return githubDao.getTrendingList()
+            }
+
+            override fun createCall(): LiveData<ApiResponse<List<RepoModel>>> {
+                return githubAPI.getTrendingRepositories()
+            }
+
+        }.asLiveData()
     }
 
-    override suspend fun saveTrendingRepositories(trendingRepoModel: List<RepoModel>?) {
-        trendingRepoModel?.let {
-            githubDao.saveTrendingList(trendingRepoModel)
-        }
-    }
 
     companion object {
-        val FRESH_TIMEOUT = TimeUnit.DAYS.toMillis(1)
+        val FRESH_TIMEOUT = TimeUnit.MINUTES.toMillis(1)
     }
 
 }

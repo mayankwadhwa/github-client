@@ -4,6 +4,12 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import com.mayankwadhwa.github_client.coroutines.executeBackground
+import com.mayankwadhwa.github_client.coroutines.executeMain
+import com.mayankwadhwa.github_client.network.ApiEmptyResponse
+import com.mayankwadhwa.github_client.network.ApiErrorResponse
+import com.mayankwadhwa.github_client.network.ApiResponse
+import com.mayankwadhwa.github_client.network.ApiSuccessResponse
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -46,9 +52,9 @@ abstract class NetworkBoundResource<ResultType, RequestType>
             result.removeSource(dbSource)
             when (response) {
                 is ApiSuccessResponse -> {
-                    appExecutors.diskIO().execute {
+                    executeBackground(coroutineScope) {
                         saveCallResult(processResponse(response))
-                        appExecutors.mainThread().execute {
+                        executeMain(coroutineScope) {
                             // we specially request a new live data,
                             // otherwise we will get immediately last cached value,
                             // which may not be updated with latest results received from network.
@@ -59,7 +65,7 @@ abstract class NetworkBoundResource<ResultType, RequestType>
                     }
                 }
                 is ApiEmptyResponse -> {
-                    appExecutors.mainThread().execute {
+                    executeMain(coroutineScope) {
                         // reload from disk whatever we had
                         result.addSource(loadFromDb()) { newData ->
                             setValue(Resource.Success(newData))

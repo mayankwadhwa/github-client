@@ -14,6 +14,6 @@ interface GithubDao {
     suspend fun hasRecentlyFetched(timeout: Long): Int?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveTrendingList(listOfRepoModel: List<RepoModel>)
+    fun saveTrendingList(listOfRepoModel: List<RepoModel>)
 
 }

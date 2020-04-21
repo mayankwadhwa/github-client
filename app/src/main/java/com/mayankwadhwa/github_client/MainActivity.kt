@@ -13,6 +13,7 @@ import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.network.GithubAPI
 import com.mayankwadhwa.github_client.persistence.GithubDatabase
 import com.mayankwadhwa.github_client.repository.GithubRepositoryImpl
+import com.mayankwadhwa.github_client.repository.Resource
 import com.mayankwadhwa.github_client.viewmodel.GithubViewModel
 import com.mayankwadhwa.github_client.viewmodel.GithubViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,34 +35,36 @@ class MainActivity : AppCompatActivity() {
         ).get(GithubViewModel::class.java)
 
 
-        viewModel.getLoading().observe(this, Observer {
-            it?.let { loading ->
-                showLoading(loading)
+        viewModel.getTrendingList().observe(this, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    showLoading(false)
+                    showError(null)
+                    it.data?.let { it1 -> showTrendingList(it1) }
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    showError(it.message)
+                }
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+
             }
         })
 
-        viewModel.getTrendingList()?.observe(this, Observer {
-            it?.let { trendingList ->
-                showTrendingList(trendingList)
-            }
-        })
-
-        viewModel.getError().observe(this, Observer {
-            showError(it)
-        })
 
         button_retry.setOnClickListener {
-            viewModel.init()
+            viewModel.retry()
         }
-
-        viewModel.init()
+//
 
     }
 
-    private fun showError(error: Throwable?) {
+    private fun showError(error: String?) {
         if (error != null) {
             layout_error.visibility = View.VISIBLE
-            Snackbar.make(layout_parent, "${error.message}", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(layout_parent, error, Snackbar.LENGTH_SHORT).show()
         } else
             layout_error.visibility = View.GONE
     }
