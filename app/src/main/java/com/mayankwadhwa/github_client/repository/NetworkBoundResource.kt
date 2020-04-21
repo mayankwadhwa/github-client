@@ -20,7 +20,6 @@ abstract class NetworkBoundResource<ResultType, RequestType>
 
     init {
         result.value = Resource.Loading(null)
-        @Suppress("LeakingThis")
         val dbSource = loadFromDb()
         result.addSource(dbSource) { data ->
             result.removeSource(dbSource)
@@ -53,6 +52,7 @@ abstract class NetworkBoundResource<ResultType, RequestType>
             when (response) {
                 is ApiSuccessResponse -> {
                     executeBackground(coroutineScope) {
+                        // Save result only after a successful call
                         saveCallResult(processResponse(response))
                         executeMain(coroutineScope) {
                             // we specially request a new live data,

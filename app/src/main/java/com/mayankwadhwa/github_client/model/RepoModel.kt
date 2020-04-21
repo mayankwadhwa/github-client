@@ -34,7 +34,7 @@ data class RepoModel(
     @SerializedName("url")
     var url: String,
 
-    var lastUpdated: Long,
+    var lastUpdated: Long = Date().time,
 
     @Ignore
     @SerializedName("builtBy")
