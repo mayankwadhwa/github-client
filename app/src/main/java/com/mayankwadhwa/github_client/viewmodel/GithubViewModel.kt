@@ -11,17 +11,42 @@ import kotlinx.coroutines.withContext
 
 class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
 
-    private var _init: MutableLiveData<String?> = MutableLiveData("")
-    private var trendingListLiveData = Transformations.switchMap(_init){
-        repository.getTrendingRepositories()
+    private var _init: MutableLiveData<SortedBy> = MutableLiveData(SortedBy.NORMAL)
+    private var trendingListLiveData = Transformations.switchMap(_init) {
+        when (it) {
+            SortedBy.STARS -> Transformations.map(repository.getTrendingRepositories()) { resource ->
+                val data = resource.data?.sortedByDescending { list -> list.stars }
+                resource.data = data
+                resource
+            }
+
+            SortedBy.NORMAL -> repository.getTrendingRepositories()
+            SortedBy.NAME -> Transformations.map(repository.getTrendingRepositories()) { resource ->
+                val data = resource.data?.sortedByDescending { list -> list.name }
+                resource.data = data
+                resource
+            }
+        }
     }
 
     fun getTrendingList(): LiveData<Resource<List<RepoModel>>> = trendingListLiveData
 
 
-    fun retry(){
+    fun retry() {
         _init.value?.let {
             _init.value = it
         }
     }
+
+    fun sortByStars(){
+        _init.value = SortedBy.STARS
+    }
+
+    fun sortByName(){
+        _init.value = SortedBy.NAME
+    }
+}
+
+enum class SortedBy {
+    STARS, NORMAL, NAME
 }

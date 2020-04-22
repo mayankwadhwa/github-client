@@ -45,6 +45,15 @@ class TrendingListAdapter(private val trendingList: List<RepoModel>) :
             holder.languageTextView.visibility = View.GONE
             holder.languageColorImageView.visibility = View.GONE
         }
+
+        holder.itemView.setOnClickListener {
+            if (holder.layoutDescription.visibility == View.GONE)
+                holder.layoutDescription.visibility = View.VISIBLE
+            else
+                holder.layoutDescription.visibility = View.GONE
+
+            notifyItemChanged(position)
+        }
     }
 }
 
@@ -57,5 +66,6 @@ class TrendingListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     val forksTextView: TextView = itemView.findViewById(R.id.text_forks)
     val languageTextView: TextView = itemView.findViewById(R.id.text_language)
     val languageColorImageView: ImageView = itemView.findViewById(R.id.iv_language)
+    val layoutDescription: View = itemView.findViewById(R.id.layout_description)
 }
 
