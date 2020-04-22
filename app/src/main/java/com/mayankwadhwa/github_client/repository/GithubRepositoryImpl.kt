@@ -16,13 +16,15 @@ class GithubRepositoryImpl(
 ) :
     GithubRepository {
 
-    override fun getTrendingRepositories(): LiveData<Resource<List<RepoModel>>> {
+    override fun getTrendingRepositories(retry: Boolean): LiveData<Resource<List<RepoModel>>> {
         return object : NetworkBoundResource<List<RepoModel>, List<RepoModel>>(coroutineScope) {
             override fun saveCallResult(item: List<RepoModel>) {
                 githubDao.saveTrendingList(item)
             }
 
             override fun shouldFetch(data: List<RepoModel>?): Boolean {
+                if (retry)
+                    return true
                 if (!data.isNullOrEmpty() && data.first().lastUpdated + FRESH_TIMEOUT > Date().time)
                     return false
                 return true

@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel.getTrendingList().observe(this, Observer {
+            swiperefresh.isRefreshing = false
             when (it) {
                 is Resource.Success -> {
                     showLoading(false)
@@ -66,6 +67,10 @@ class MainActivity : AppCompatActivity() {
 
 
         button_retry.setOnClickListener {
+            viewModel.retry()
+        }
+
+        swiperefresh.setOnRefreshListener {
             viewModel.retry()
         }
 //

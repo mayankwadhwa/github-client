@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 interface GithubAPI {
     @GET("repositories")
-    fun getTrendingRepositories(): LiveData<ApiResponse<List<RepoModel>>>
+    fun  getTrendingRepositories(): LiveData<ApiResponse<List<RepoModel>>>
 
     companion object Factory {
         fun create(): GithubAPI {

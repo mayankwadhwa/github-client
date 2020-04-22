@@ -26,6 +26,7 @@ class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
                 resource.data = data
                 resource
             }
+            SortedBy.RETRY -> repository.getTrendingRepositories(true)
         }
     }
 
@@ -33,20 +34,18 @@ class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
 
 
     fun retry() {
-        _init.value?.let {
-            _init.value = it
-        }
+        _init.value = SortedBy.RETRY
     }
 
-    fun sortByStars(){
+    fun sortByStars() {
         _init.value = SortedBy.STARS
     }
 
-    fun sortByName(){
+    fun sortByName() {
         _init.value = SortedBy.NAME
     }
 }
 
 enum class SortedBy {
-    STARS, NORMAL, NAME
+    STARS, NORMAL, NAME, RETRY
 }
