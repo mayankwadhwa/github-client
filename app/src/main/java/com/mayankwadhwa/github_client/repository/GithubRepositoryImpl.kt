@@ -41,7 +41,7 @@ class GithubRepositoryImpl(
 
 
     companion object {
-        val FRESH_TIMEOUT = TimeUnit.HOURS.toMillis(2)
+        val FRESH_TIMEOUT = TimeUnit.SECONDS.toMillis(2)
     }
 
 }

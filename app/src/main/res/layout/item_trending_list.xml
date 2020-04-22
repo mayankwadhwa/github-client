@@ -31,9 +31,7 @@
         android:id="@+id/text_repo_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginRight="36dp"
+        android:layout_marginTop="6dp"
         android:layout_marginBottom="16dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintStart_toStartOf="@id/text_username"
@@ -42,38 +40,43 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_description"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/iv_avatar"
-        app:layout_constraintTop_toBottomOf="@id/text_repo_name">
+        app:layout_constraintTop_toBottomOf="@id/text_repo_name"
+        android:layout_marginRight="16dp">
 
         <TextView
             android:id="@+id/text_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="64dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Description" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Description"
+             />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@id/text_description"
             app:layout_constraintTop_toBottomOf="@id/text_description">
 
             <ImageView
+                android:id="@+id/iv_language"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_margin="4dp"
-                android:src="@drawable/star_yellow_16" />
+                android:padding="2dp"
+                />
 
             <TextView
                 android:id="@+id/text_language"
                 android:layout_width="wrap_content"
+                android:layout_marginTop="4dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 tools:text="Language" />
@@ -88,6 +91,7 @@
                 android:id="@+id/text_stars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 tools:text="Stars" />
 
@@ -102,6 +106,7 @@
                 android:id="@+id/text_forks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 tools:text="Forks" />
 

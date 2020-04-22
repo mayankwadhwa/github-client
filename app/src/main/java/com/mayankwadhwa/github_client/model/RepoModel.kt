@@ -30,6 +30,12 @@ data class RepoModel(
     @SerializedName("stars")
     var stars: Int,
 
+    @SerializedName("language")
+    var language: String?,
+
+    @SerializedName("languageColor")
+    var languageColor: String?,
+
     @PrimaryKey
     @SerializedName("url")
     var url: String,
@@ -40,5 +46,5 @@ data class RepoModel(
     @SerializedName("builtBy")
     val builtBy: List<BuiltBy>
 ) {
-    constructor() : this("", "", 0, "", 0, "", 0, "", Date().time, emptyList())
+    constructor() : this("", "", 0, "", 0, "", 0,"", "","", Date().time, emptyList())
 }

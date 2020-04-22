@@ -45,11 +45,6 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     showLoading(false)
                     showError(it.message)
-                    it.data?.let { it1 ->
-                        showError(null)
-                        showTrendingList(it1)
-                    }
-
                 }
                 is Resource.Loading -> {
                     showLoading(true)
