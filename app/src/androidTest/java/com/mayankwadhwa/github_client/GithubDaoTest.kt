@@ -9,8 +9,10 @@ import com.github.javafaker.Faker
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.persistence.GithubDao
 import com.mayankwadhwa.github_client.persistence.GithubDatabase
+import com.mayankwadhwa.github_client.util.TestFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertTrue
@@ -23,6 +25,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class GithubDaoTest {
     @get: Rule
@@ -32,21 +35,6 @@ class GithubDaoTest {
     private lateinit var realDatabase: GithubDatabase
     private lateinit var tempDao: GithubDao
     private lateinit var realDao: GithubDao
-
-    private val faker = Faker()
-    private val repoModel = RepoModel(
-        faker.name().firstName(),
-        faker.avatar().image(),
-        faker.number().randomDigit(),
-        faker.leagueOfLegends().champion(),
-        faker.number().randomDigit(),
-        faker.name().fullName(),
-        faker.number().randomDigit(),
-        faker.avatar().image(),
-        Date().time,
-        emptyList()
-    )
-    val listOfRepoModel = listOf(repoModel)
 
 
     @Before
@@ -79,7 +67,7 @@ class GithubDaoTest {
 
     @Test
     fun saveTrendingList_savesData() = runBlockingTest{
-        tempDao.saveTrendingList(listOfRepoModel)
+        tempDao.saveTrendingList(TestFactory.makeTrendingList())
         val testObserver: Observer<List<RepoModel>> = mock()
 
         tempDao.getTrendingList().observeForever(testObserver)
@@ -95,7 +83,8 @@ class GithubDaoTest {
 
     @Test
     fun getAllRetrievesData() = runBlockingTest{
-        tempDao.saveTrendingList(listOfRepoModel)
+        val trendingList = TestFactory.makeTrendingList()
+        tempDao.saveTrendingList(trendingList)
         val testObserver: Observer<List<RepoModel>> = mock()
         tempDao.getTrendingList().observeForever(testObserver)
 
@@ -105,8 +94,8 @@ class GithubDaoTest {
 
         verify(testObserver).onChanged(argumentCaptor.capture())
 
-        val capturedArgument = argumentCaptor.value
-        assertTrue(capturedArgument.contains(repoModel))
+        val capturedArgument = argumentCaptor.value[0]
+        assertTrue(capturedArgument == trendingList[0])
     }
 
 

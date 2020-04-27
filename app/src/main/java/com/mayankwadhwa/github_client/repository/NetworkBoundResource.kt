@@ -11,6 +11,8 @@ import com.mayankwadhwa.github_client.network.ApiErrorResponse
 import com.mayankwadhwa.github_client.network.ApiResponse
 import com.mayankwadhwa.github_client.network.ApiSuccessResponse
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 abstract class NetworkBoundResource<ResultType, RequestType>
@@ -22,6 +24,7 @@ abstract class NetworkBoundResource<ResultType, RequestType>
         result.value = Resource.Loading(null)
         val dbSource = loadFromDb()
         result.addSource(dbSource) { data ->
+            // Remove the current source of the liveData
             result.removeSource(dbSource)
             if (shouldFetch(data)) {
                 fetchFromNetwork(dbSource)
@@ -54,7 +57,7 @@ abstract class NetworkBoundResource<ResultType, RequestType>
                     executeBackground(coroutineScope) {
                         // Save result only after a successful call
                         saveCallResult(processResponse(response))
-                        executeMain(coroutineScope) {
+                        withContext(Dispatchers.Main) {
                             // we specially request a new live data,
                             // otherwise we will get immediately last cached value,
                             // which may not be updated with latest results received from network.
