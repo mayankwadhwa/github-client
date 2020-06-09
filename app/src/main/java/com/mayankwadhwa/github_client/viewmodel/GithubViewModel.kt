@@ -4,22 +4,17 @@ import androidx.lifecycle.*
 import com.mayankwadhwa.github_client.model.RepoModel
 import com.mayankwadhwa.github_client.repository.GithubRepository
 import com.mayankwadhwa.github_client.repository.Resource
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
 
     private var _init: MutableLiveData<SortedBy> = MutableLiveData(SortedBy.NORMAL)
-    private var trendingListLiveData = Transformations.switchMap(_init) {
+    private var _trendingListLiveData = Transformations.switchMap(_init) {
         when (it) {
             SortedBy.STARS -> Transformations.map(repository.getTrendingRepositories()) { resource ->
                 val data = resource.data?.sortedByDescending { list -> list.stars }
                 resource.data = data
                 resource
             }
-
             SortedBy.NORMAL -> repository.getTrendingRepositories()
             SortedBy.NAME -> Transformations.map(repository.getTrendingRepositories()) { resource ->
                 val data = resource.data?.sortedByDescending { list -> list.name }
@@ -30,7 +25,7 @@ class GithubViewModel(private val repository: GithubRepository) : ViewModel() {
         }
     }
 
-    fun getTrendingList(): LiveData<Resource<List<RepoModel>>> = trendingListLiveData
+    fun getTrendingList(): LiveData<Resource<List<RepoModel>>> = _trendingListLiveData
 
 
     fun retry() {

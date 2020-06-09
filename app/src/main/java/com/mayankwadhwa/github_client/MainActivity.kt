@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         ProgressDialog.show(this, "Loading", "Please Wait")
     }
 
-    lateinit var viewModel: GithubViewModel
+    private lateinit var viewModel: GithubViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
