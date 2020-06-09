@@ -1,7 +1,7 @@
 # Github Client (Android Architecture Sample)
 
 ## Demo
-![Demo](assets/github-client-demo.gif)
+<img src="assets/github-client-demo.gif" width="500px" height="500px"/>
 
 In this Project you'll find:
 *   Kotlin **[Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html)** for background operations.
